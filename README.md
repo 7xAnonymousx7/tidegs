@@ -11,8 +11,5 @@ This package contains the files required to host the supplementary webpage for I
 
 - `static/css/index.css`: Shared styles for the page, including theme variables and layout rules.
 
-- `supp.pdf`: The main supplementary document providing technical details, and additional visualization results.
-
 - `static/`: A folder containing all supporting assets required by the supplementary webpage.
 
-- `ANONYMIZATION_TERMS_DRAFT.md`: A draft checklist of identity-bearing terms to consider when creating an anonymous repository on `anonymous.4open.science`.
