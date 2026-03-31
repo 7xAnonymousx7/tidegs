@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriately as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="Supplementary webpage for TideGS with visual quality comparisons and a method overview.">
+  <meta property="og:title" content="TideGS Supplementary Material" />
+  <meta property="og:description" content="Supplementary webpage for TideGS with visual quality comparisons and a method overview." />
+  <meta property="og:url" content="" />
+  <!-- Path to banner image, should be in the path listed below. Optimal dimensions are 1200X630-->
+  <meta property="og:image" content="static/images/overview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+
+  <meta name="twitter:title" content="TideGS Supplementary Material">
+  <meta name="twitter:description" content="Supplementary webpage for TideGS with visual quality comparisons and a method overview.">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimensions are 1200X600-->
+  <meta name="twitter:image" content="static/images/overview.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="TideGS, 3D Gaussian Splatting, supplementary material">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>TideGS Supplementary Material</title>
+  <link rel="icon" type="image/png" href="static/images/overview.png">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <!-- Most editable site content now lives in static/js/site-config.js. -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/site-config.js"></script>
+  <script src="static/js/index.js"></script>
+  <script src="static/js/site-renderer.js"></script>
+</head>
+
+<body>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">Scalable Training of 3D Gaussian Splatting via Out-of-Core Optimization
+            </h1>
+            <div class="is-size-5 publication-authors">
+              <!-- Paper authors -->
+              <!-- <span class="author-block">
+                <a href="FIRST AUTHOR PERSONAL LINK" target="_blank">First Author</a><sup>*</sup>,</span>
+              <span class="author-block">
+                <a href="SECOND AUTHOR PERSONAL LINK" target="_blank">Second Author</a><sup>*</sup>,</span>
+              <span class="author-block">
+                <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Third Author</a>
+              </span> -->
+              <!-- <span class="author-block">
+                <a>Anonymous Author(s)</a></span>
+              </span> -->
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">ICML 2026 Submission #3888</span>
+              <!-- <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span> -->
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hero Comparison Section -->
+  <section class="section comparison-section" id="hero-comparison">
+    <div class="container">
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <h2 class="title is-3">Visual Quality Comparison</h2>
+          <div class="hero-triple-comparison">
+            <div class="triple-comparison-wrapper" data-slider="visual-quality-triple">
+              <video class="comparison-video video-left" loop playsinline muted autoplay>
+                <source src="static/videos/visual-quality/TideGS_first100_10fps.mp4" type="video/mp4">
+              </video>
+              <video class="comparison-video video-middle" loop playsinline muted autoplay>
+                <source src="static/videos/visual-quality/CLM_first100_10fps.mp4" type="video/mp4">
+              </video>
+              <video class="comparison-video video-right" loop playsinline muted autoplay>
+                <source src="static/videos/visual-quality/vanilla_3dgs.mp4" type="video/mp4">
+              </video>
+              <div class="slider-handle handle-left"></div>
+              <div class="slider-handle handle-right"></div>
+              <span class="comparison-label left">TideGS</span>
+              <span class="comparison-label center">CLM</span>
+              <span class="comparison-label right">Vanilla 3DGS</span>
+            </div>
+          </div>
+
+          <div class="has-text-centered" style="margin-top: 1.5rem;">
+            <p class="subtitle is-5" style="color: var(--theme-secondary-text);">Drag the two split bars to compare TideGS, CLM, and Vanilla 3DGS in one view.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Paper abstract -->
+  <section class="section hero" id="abstract">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+This webpage presents supplementary visualizations for <strong>TideGS</strong>, including a direct visual quality comparison and a method overview. Replace this paragraph with your paper abstract if you want the website text to match the manuscript exactly.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End paper abstract -->
+
+
+
+<!-- ✅ 新增的 Section：单张图片 -->
+<section class="section hero" id="method-overview">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+
+        <!-- 标题 -->
+        <h2 class="title is-3">Method Overview</h2>
+        <br>
+
+        <!-- 图片与说明 -->
+        <div class="content has-text-centered">
+          <img src="static/images/overview.png" alt="Method Overview" 
+               style="width:100%; height:auto; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+          
+          <!-- caption -->
+          <p class="has-text-grey mt-3" style="font-size: 0.9em;">
+            Method overview for <strong>TideGS</strong>.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Supplementary Figures Section -->
+  <section class="section" id="supplementary-figures">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <h2 class="title is-3">Supplementary Figures</h2>
+        </div>
+      </div>
+
+      <!-- Figure 1 -->
+      <div class="figure-block">
+        <figure>
+          <img src="static/images/figures/bicycle_densify_comparison.png" alt="Figure 1">
+          <figcaption>
+            <span class="figure-number">Figure 1.</span>
+            Bicycle: densify-on vs. dense-initialized densify-off.
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- Figure 2 -->
+      <div class="figure-block">
+        <figure>
+          <img src="static/images/figures/bonsai_densify_comparison.png" alt="Figure 2">
+          <figcaption>
+            <span class="figure-number">Figure 2.</span>
+            Bonsai: densify-on vs. dense-initialized densify-off.
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- Figure 3 -->
+      <div class="figure-block">
+        <figure>
+          <img src="static/images/figures/final_test_psnr_comparison.png" alt="Figure 3">
+          <figcaption>
+            <span class="figure-number">Figure 3.</span>
+            Final test PSNR comparison.
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="figure-block">
+        <figure>
+          <img src="static/images/figures/shuffle_exp.png" alt="Figure 4">
+          <figcaption>
+            <span class="figure-number">Figure 4.</span>
+            Convergence comparison between Shuffle and Trajectory orderings on an in-memory-feasible scene.
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="figure-block">
+        <figure>
+          <img src="static/images/figures/gpu_comparison_wall_clock.png" alt="Figure 5">
+          <figcaption>
+            <span class="figure-number">Figure 5.</span>
+            Time-to-convergence comparison between TideGS and Grendel-GS on mip-NeRF 360, plotted against wall-clock training time.
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="figure-block">
+        <figure>
+          <img src="static/images/figures/gpu_comparison_iterations.png" alt="Figure 6">
+          <figcaption>
+            <span class="figure-number">Figure 6.</span>
+            Time-to-convergence comparison between TideGS and Grendel-GS on mip-NeRF 360, plotted against training iterations.
+          </figcaption>
+        </figure>
+      </div>
+
+    </div>
+  </section>
+  <!-- End Supplementary Figures -->
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content has-text-centered">
+            <p style="font-weight: 600; color: var(--theme-dark-text); margin-bottom: 0.5rem;">
+              Scalable Training of 3D Gaussian Splatting via Out-of-Core Optimization
+            </p>
+            <p style="color: var(--theme-muted-text);">
+              ICML 2026 Submission #3888
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+
+</body>
+
+</html>
