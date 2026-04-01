@@ -379,6 +379,193 @@
     bindTripleComparisonSlider(wrapper, heroConfig);
   }
 
+    function initZoomFeature(section, videos, scrubber) {
+      var videoBoxes = Array.prototype.slice.call(section.querySelectorAll(".video-box"));
+      var videoContainer = section.querySelector(".baseline-video-container");
+      if (!videoBoxes.length || !videoContainer) { return null; }
+
+      var rectIndicators = [];
+      var overlays = [];
+
+      videoBoxes.forEach(function (box, i) {
+        var vid = videos[i];
+        if (!vid) { return; }
+
+        // Wrap the video element for precise overlay positioning
+        var inner = document.createElement("div");
+        inner.className = "video-inner-wrap";
+        box.insertBefore(inner, vid);
+        inner.appendChild(vid);
+
+        // Yellow rect indicator (shown on all 3 videos)
+        var ind = document.createElement("div");
+        ind.className = "zoom-rect-indicator";
+        inner.appendChild(ind);
+        rectIndicators.push(ind);
+
+        // Transparent draw overlay (captures mouse)
+        var ov = document.createElement("div");
+        ov.className = "video-draw-overlay";
+        inner.appendChild(ov);
+        overlays.push(ov);
+      });
+
+      // Drag hint text
+      var hint = document.createElement("p");
+      hint.className = "zoom-drag-hint";
+      hint.textContent = "Drag on any video to zoom in";
+      videoContainer.parentNode.insertBefore(hint, videoContainer.nextSibling);
+
+      // Zoom panels (inserted above video container, hidden initially)
+      var zoomWrap = document.createElement("div");
+      zoomWrap.className = "zoom-panels-wrap";
+      zoomWrap.style.display = "none";
+
+      var zoomHeader = document.createElement("div");
+      zoomHeader.className = "zoom-panels-header";
+      var zoomTitle = document.createElement("span");
+      zoomTitle.className = "zoom-panels-title";
+      zoomTitle.textContent = "Zoomed Region";
+      var closeBtn = document.createElement("button");
+      closeBtn.className = "zoom-close-btn";
+      closeBtn.innerHTML = "&#x2715;";
+      closeBtn.title = "Close";
+      zoomHeader.appendChild(zoomTitle);
+      zoomHeader.appendChild(closeBtn);
+      zoomWrap.appendChild(zoomHeader);
+
+      var zoomRow = document.createElement("div");
+      zoomRow.className = "zoom-panels-row";
+      zoomWrap.appendChild(zoomRow);
+
+      var zoomCanvases = [];
+      videoBoxes.forEach(function (box, i) {
+        var panel = document.createElement("div");
+        panel.className = "zoom-panel";
+        var canvas = document.createElement("canvas");
+        panel.appendChild(canvas);
+        zoomCanvases.push(canvas);
+        var srcLabel = box.querySelector(".video-label");
+        var lbl = document.createElement("p");
+        lbl.className = srcLabel ? srcLabel.className : "video-label";
+        lbl.textContent = srcLabel ? srcLabel.textContent : "";
+        panel.appendChild(lbl);
+        zoomRow.appendChild(panel);
+      });
+
+      videoContainer.parentNode.insertBefore(zoomWrap, videoContainer);
+
+      // State
+      var normRect = null;
+
+      closeBtn.addEventListener("click", function () {
+        zoomWrap.style.display = "none";
+        rectIndicators.forEach(function (r) { r.style.display = "none"; });
+        normRect = null;
+        hint.style.display = "";
+      });
+
+      function showRects(nr) {
+        rectIndicators.forEach(function (ind, i) {
+          var v = videos[i];
+          if (!v) { return; }
+          var vw = v.offsetWidth || 1;
+          var vh = v.offsetHeight || 1;
+          ind.style.display = "block";
+          ind.style.left   = (nr.x * vw) + "px";
+          ind.style.top    = (nr.y * vh) + "px";
+          ind.style.width  = (nr.w * vw) + "px";
+          ind.style.height = (nr.h * vh) + "px";
+        });
+      }
+
+      function drawZoom(nr) {
+        if (!nr || nr.w < 0.015 || nr.h < 0.015) { return; }
+        zoomWrap.style.display = "block";
+        hint.style.display = "none";
+
+        videos.forEach(function (v, i) {
+          var c = zoomCanvases[i];
+          if (!c) { return; }
+          var vw = v.videoWidth;
+          var vh = v.videoHeight;
+          if (!vw || !vh) { return; }
+
+          var panelW = Math.max(1, Math.floor((zoomRow.offsetWidth - (videos.length - 1) * 12) / videos.length));
+          var panelH = Math.round(panelW * (nr.h * vh) / (nr.w * vw));
+
+          c.width  = panelW;
+          c.height = panelH;
+
+          try {
+            var ctx = c.getContext("2d");
+            ctx.clearRect(0, 0, panelW, panelH);
+            ctx.drawImage(v,
+              nr.x * vw, nr.y * vh, nr.w * vw, nr.h * vh,
+              0, 0, panelW, panelH
+            );
+          } catch (e) {}
+        });
+      }
+
+      // Mouse draw events per overlay
+      overlays.forEach(function (ov) {
+        var dragging = false;
+        var sx = 0, sy = 0;
+
+        ov.addEventListener("mousedown", function (e) {
+          dragging = true;
+          var r = ov.getBoundingClientRect();
+          sx = e.clientX - r.left;
+          sy = e.clientY - r.top;
+          e.preventDefault();
+        });
+
+        document.addEventListener("mousemove", function (e) {
+          if (!dragging) { return; }
+          var r = ov.getBoundingClientRect();
+          var cx = e.clientX - r.left;
+          var cy = e.clientY - r.top;
+          var ow = r.width  || 1;
+          var oh = r.height || 1;
+          var nr = {
+            x: Math.max(0, Math.min(1, Math.min(sx, cx) / ow)),
+            y: Math.max(0, Math.min(1, Math.min(sy, cy) / oh)),
+            w: Math.min(1, Math.abs(cx - sx) / ow),
+            h: Math.min(1, Math.abs(cy - sy) / oh)
+          };
+          // Clamp right/bottom
+          nr.w = Math.min(nr.w, 1 - nr.x);
+          nr.h = Math.min(nr.h, 1 - nr.y);
+          normRect = nr;
+          showRects(nr);
+        });
+
+        document.addEventListener("mouseup", function () {
+          if (!dragging) { return; }
+          dragging = false;
+          if (normRect && normRect.w > 0.015 && normRect.h > 0.015) {
+            drawZoom(normRect);
+          }
+        });
+      });
+
+      // Re-draw zoom on scrubber move
+      if (scrubber) {
+        scrubber.addEventListener("input", function () {
+          if (!normRect) { return; }
+          requestAnimationFrame(function () { drawZoom(normRect); });
+        });
+      }
+
+      // Called after new videos finish loading (scene change)
+      return function onVideosReady() {
+        if (normRect) {
+          setTimeout(function () { drawZoom(normRect); }, 80);
+        }
+      };
+    }
+
     function renderBottomComparisonSection() {
       var demoConfig = config.bottomComparison;
       var section = document.querySelector("#matrixcity-baseline-demo");
@@ -437,6 +624,17 @@
         state.scene = scenes[0];
       }
 
+      // --- Scrubber state ---
+      var scrubberInput = section.querySelector("#matrixcity-scrubber");
+      var leaderVideo   = methodVideos[0] || null;
+      var onZoomReady   = null; // set after initZoomFeature
+
+      function resetScrubber() {
+        methodVideos.forEach(function (v) { v.currentTime = 0; });
+        if (scrubberInput) { scrubberInput.value = 0; }
+      }
+
+      // --- Video loading ---
       function updateVideos() {
         methodVideos.forEach(function (video) {
           var methodId = String(video.getAttribute("data-method"));
@@ -452,7 +650,12 @@
           }
         });
 
-        loadVideosSync(methodVideos);
+        loadVideosSync(methodVideos, function () {
+          // After sync-load, pause all videos and reset scrubber to frame 0
+          methodVideos.forEach(function (v) { v.pause(); });
+          resetScrubber();
+          if (onZoomReady) { onZoomReady(); }
+        });
       }
 
       function renderSceneButtons() {
@@ -470,10 +673,21 @@
         });
       }
 
+      // --- Scrubber events: drag to seek, always paused ---
+      if (scrubberInput) {
+        scrubberInput.addEventListener("input", function () {
+          if (!leaderVideo) { return; }
+          var duration = isFinite(leaderVideo.duration) ? leaderVideo.duration : 0;
+          var time = (parseInt(scrubberInput.value, 10) / 1000) * duration;
+          methodVideos.forEach(function (v) { v.currentTime = time; });
+        });
+      }
+
       renderSceneButtons();
       if (methodVideos.length > 1) {
         syncFollowerVideos(methodVideos[0], methodVideos.slice(1));
       }
+      onZoomReady = initZoomFeature(section, methodVideos, scrubberInput);
       updateVideos();
     }
     document.addEventListener("DOMContentLoaded", function () {
