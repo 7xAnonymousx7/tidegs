@@ -484,6 +484,15 @@
         zoomWrap.style.display = "block";
         hint.style.display = "none";
 
+        // Force reflow so offsetWidth is accurate after display:block
+        var rowW = zoomRow.offsetWidth;
+        if (rowW < 10) {
+          // Fallback: compute from video element width
+          var sampleVideo = videos[0];
+          rowW = sampleVideo ? (sampleVideo.offsetWidth * videos.length + 12 * (videos.length - 1)) : 600;
+        }
+        var panelW = Math.max(100, Math.floor((rowW - (videos.length - 1) * 12) / videos.length));
+
         videos.forEach(function (v, i) {
           var c = zoomCanvases[i];
           if (!c) { return; }
@@ -491,7 +500,6 @@
           var vh = v.videoHeight;
           if (!vw || !vh) { return; }
 
-          var panelW = Math.max(1, Math.floor((zoomRow.offsetWidth - (videos.length - 1) * 12) / videos.length));
           var panelH = Math.round(panelW * (nr.h * vh) / (nr.w * vw));
 
           c.width  = panelW;
