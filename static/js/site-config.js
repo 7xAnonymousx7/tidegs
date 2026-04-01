@@ -56,9 +56,9 @@ window.SITE_CONFIG = {
     title: "Visual Quality Comparison",
     summaryHtml: "Drag the two split bars to compare TideGS, CLM, and Vanilla 3DGS in one view.",
     tripleComparison: {
-      leftVideo: "static/videos/visual-quality/tidegs_15s_6fps.mp4",
-      middleVideo: "static/videos/visual-quality/clm_15s_6fps.mp4",
-      rightVideo: "static/videos/visual-quality/vanilla_3dgs_15s_6fps.mp4",
+      leftVideo: "static/videos/matrixcity_video_slice/tidegs/1.mp4",
+      middleVideo: "static/videos/matrixcity_video_slice/clm/1.mp4",
+      rightVideo: "static/videos/matrixcity_video_slice/vanilla_3dgs/1.mp4",
       leftLabel: "TideGS",
       middleLabel: "CLM",
       rightLabel: "Vanilla 3DGS",
@@ -66,5 +66,23 @@ window.SITE_CONFIG = {
       secondDivider: 66.66,
       minGap: 8
     }
-  }
-};
+    },
+    bottomComparison: {
+      enabled: true,
+      title: "Video Gallery",
+      subtitle: "MatrixCity Dataset",
+      sampleLabel: "Sample",
+      descriptionHtml: "Comparison among <strong>Vanilla 3DGS</strong>, <strong>CLM</strong>, and <strong>TideGS (ours)</strong> on the MatrixCity dataset.",
+
+      defaultScene: "1",
+      scenes: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+
+      methods: [
+        { id: "vanilla_3dgs", label: "Vanilla 3DGS" },
+        { id: "clm", label: "CLM" },
+        { id: "tidegs", label: "TideGS (ours)" }
+      ],
+
+      videoPathTemplate: "static/videos/matrixcity_video_slice/{method}/{scene}.mp4"
+    }
+  };

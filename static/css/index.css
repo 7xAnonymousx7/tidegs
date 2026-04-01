@@ -421,3 +421,118 @@ video {
   color: var(--theme-primary);
   margin-right: 0.25em;
 }
+
+#matrixcity-baseline-demo .selector-label {
+  font-weight: 600;
+  color: var(--theme-secondary-text);
+  font-size: 0.95em;
+  margin-bottom: 8px;
+}
+
+#matrixcity-baseline-demo .scene-selector {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+#matrixcity-baseline-demo .scene-circle {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--theme-scene-circle-bg);
+  color: var(--theme-secondary-text);
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+#matrixcity-baseline-demo .scene-circle:hover {
+  background-color: var(--theme-scene-circle-hover);
+  transform: scale(1.1);
+}
+
+#matrixcity-baseline-demo .scene-circle.active {
+  background-color: var(--theme-primary);
+  color: #fff;
+  border-color: var(--theme-primary);
+  box-shadow: 0 2px 8px rgba(var(--theme-primary-rgb), 0.4);
+}
+
+#matrixcity-baseline-demo .method-selector {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+#matrixcity-baseline-demo .method-pill {
+  padding: 8px 20px;
+  border: 2px solid #dbdbdb;
+  border-radius: 20px;
+  background-color: #fff;
+  color: var(--theme-body-text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#matrixcity-baseline-demo .method-pill:hover {
+  border-color: var(--theme-primary);
+  color: var(--theme-primary);
+}
+
+#matrixcity-baseline-demo .method-pill.active {
+  background-color: var(--theme-primary);
+  border-color: var(--theme-primary);
+  color: #fff;
+}
+
+#matrixcity-baseline-demo .baseline-video-container {
+  display: flex;
+  gap: 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+#matrixcity-baseline-demo .video-box {
+  flex: 1;
+}
+
+#matrixcity-baseline-demo .video-box video {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+#matrixcity-baseline-demo .video-label {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+#matrixcity-baseline-demo .video-label.baseline {
+  color: var(--theme-body-text);
+}
+
+#matrixcity-baseline-demo .video-label.ours {
+  color: var(--theme-primary);
+}
+
+#matrixcity-demo-description {
+  font-size: 0.95em;
+}
+
+@media (max-width: 900px) {
+  #matrixcity-baseline-demo .baseline-video-container {
+    flex-direction: column;
+  }
+}

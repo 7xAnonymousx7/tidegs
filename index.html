@@ -42,9 +42,9 @@
   <script defer src="static/js/fontawesome.all.min.js"></script>
   <script src="static/js/bulma-carousel.min.js"></script>
   <script src="static/js/bulma-slider.min.js"></script>
-  <script src="static/js/site-config.js"></script>
+  <script src="static/js/site-config.js?v=20260401"></script>
   <script src="static/js/index.js"></script>
-  <script src="static/js/site-renderer.js"></script>
+  <script src="static/js/site-renderer.js?v=20260401"></script>
 </head>
 
 <body>
@@ -239,7 +239,38 @@ This webpage presents supplementary visualizations for <strong>TideGS</strong>, 
   </section>
   <!-- End Supplementary Figures -->
 
-  <footer class="footer">
+                      <section class="section hero" id="matrixcity-baseline-demo">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered has-text-centered">
+            <div class="column">
+              <h2 class="title is-3" id="matrixcity-demo-title">Video Gallery</h2>
+              <h3 class="subtitle is-5" id="matrixcity-demo-subtitle">MatrixCity Dataset</h3>
+
+              <p class="selector-label" id="matrixcity-sample-label">Sample</p>
+              <div id="matrixcity-scene-selector" class="scene-selector"></div>
+
+              <div class="baseline-video-container">
+                <div class="video-box">
+                  <video id="matrixcityVanillaVideo" class="matrixcity-method-video" data-method="vanilla_3dgs" src="static/videos/matrixcity_video_slice/vanilla_3dgs/1.mp4" loop playsinline autoplay muted preload="metadata"></video>
+                  <p class="video-label vanilla">Vanilla 3DGS</p>
+                </div>
+                <div class="video-box">
+                  <video id="matrixcityClmVideo" class="matrixcity-method-video" data-method="clm" src="static/videos/matrixcity_video_slice/clm/1.mp4" loop playsinline autoplay muted preload="metadata"></video>
+                  <p class="video-label clm">CLM</p>
+                </div>
+                <div class="video-box">
+                  <video id="matrixcityTidegsVideo" class="matrixcity-method-video" data-method="tidegs" src="static/videos/matrixcity_video_slice/tidegs/1.mp4" loop playsinline autoplay muted preload="metadata"></video>
+                  <p class="video-label ours">TideGS (ours)</p>
+                </div>
+              </div>
+
+              <p id="matrixcity-demo-description" class="has-text-grey mt-4"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    <footer class="footer">
     <div class="container">
       <div class="columns is-centered">
         <div class="column is-8">

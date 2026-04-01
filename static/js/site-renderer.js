@@ -379,10 +379,108 @@
     bindTripleComparisonSlider(wrapper, heroConfig);
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    applyTheme(config.theme);
-    applyMeta(config.meta, config.assets);
-    renderSiteContent();
-    renderHeroSection();
-  });
-})();
+    function renderBottomComparisonSection() {
+      var demoConfig = config.bottomComparison;
+      var section = document.querySelector("#matrixcity-baseline-demo");
+
+      if (!section) {
+        return;
+      }
+
+      if (!demoConfig || demoConfig.enabled === false) {
+        section.style.display = "none";
+        return;
+      }
+
+      setText("#matrixcity-demo-title", formatTemplate(demoConfig.title));
+      setText("#matrixcity-demo-subtitle", formatTemplate(demoConfig.subtitle));
+      setText("#matrixcity-sample-label", formatTemplate(demoConfig.sampleLabel || "Sample"));
+      setHtml("#matrixcity-demo-description", formatTemplate(demoConfig.descriptionHtml || ""));
+
+      var sceneSelector = section.querySelector("#matrixcity-scene-selector");
+      var methodVideos = Array.prototype.slice.call(section.querySelectorAll(".matrixcity-method-video[data-method]"));
+      var methods = demoConfig.methods || [];
+
+      if (!sceneSelector || !methodVideos.length || !methods.length) {
+        return;
+      }
+
+      var methodMap = {};
+      methods.forEach(function (method) {
+        methodMap[String(method.id)] = method;
+      });
+
+      methodVideos = methodVideos.filter(function (video) {
+        var methodId = String(video.getAttribute("data-method") || "");
+        return !!methodMap[methodId];
+      });
+
+      if (!methodVideos.length) {
+        section.style.display = "none";
+        return;
+      }
+
+      var scenes = (demoConfig.scenes || []).map(function (scene) {
+        return String(scene);
+      });
+
+      if (!scenes.length) {
+        section.style.display = "none";
+        return;
+      }
+
+      var state = {
+        scene: String(demoConfig.defaultScene || scenes[0])
+      };
+
+      if (scenes.indexOf(state.scene) === -1) {
+        state.scene = scenes[0];
+      }
+
+      function updateVideos() {
+        methodVideos.forEach(function (video) {
+          var methodId = String(video.getAttribute("data-method"));
+          var path = formatTemplate(demoConfig.videoPathTemplate, {
+            scene: state.scene,
+            method: methodId
+          });
+          setVideoSource(video, path);
+
+          var labelElement = video.parentElement ? video.parentElement.querySelector(".video-label") : null;
+          if (labelElement && methodMap[methodId] && methodMap[methodId].label) {
+            setText(labelElement, methodMap[methodId].label);
+          }
+        });
+
+        loadVideosSync(methodVideos);
+      }
+
+      function renderSceneButtons() {
+        sceneSelector.innerHTML = "";
+        scenes.forEach(function (scene) {
+          var button = document.createElement("div");
+          button.className = "scene-circle" + (scene === state.scene ? " active" : "");
+          button.innerHTML = "<span>" + escapeHtml(scene) + "</span>";
+          button.addEventListener("click", function () {
+            state.scene = scene;
+            renderSceneButtons();
+            updateVideos();
+          });
+          sceneSelector.appendChild(button);
+        });
+      }
+
+      renderSceneButtons();
+      if (methodVideos.length > 1) {
+        syncFollowerVideos(methodVideos[0], methodVideos.slice(1));
+      }
+      updateVideos();
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+      applyTheme(config.theme);
+      applyMeta(config.meta, config.assets);
+      renderSiteContent();
+      renderHeroSection();
+      renderBottomComparisonSection();
+    });
+  })();
