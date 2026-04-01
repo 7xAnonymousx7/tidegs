@@ -455,13 +455,13 @@
 
       videoContainer.parentNode.insertBefore(zoomWrap, videoContainer);
 
-      // State
-      var normRect = null;
+      // State — default rect: flush top-right corner
+      var normRect = { x: 0.72, y: 0.0, w: 0.28, h: 0.28 };
 
       closeBtn.addEventListener("click", function () {
         zoomWrap.style.display = "none";
         rectIndicators.forEach(function (r) { r.style.display = "none"; });
-        normRect = null;
+        normRect = { x: 0.72, y: 0.0, w: 0.28, h: 0.28 };
         hint.style.display = "";
       });
 
@@ -484,12 +484,10 @@
         zoomWrap.style.display = "block";
         hint.style.display = "none";
 
-        // Force reflow so offsetWidth is accurate after display:block
         var rowW = zoomRow.offsetWidth;
         if (rowW < 10) {
-          // Fallback: compute from video element width
-          var sampleVideo = videos[0];
-          rowW = sampleVideo ? (sampleVideo.offsetWidth * videos.length + 12 * (videos.length - 1)) : 600;
+          var sv = videos[0];
+          rowW = sv ? (sv.offsetWidth * videos.length + 12 * (videos.length - 1)) : 600;
         }
         var panelW = Math.max(100, Math.floor((rowW - (videos.length - 1) * 12) / videos.length));
 
@@ -501,7 +499,6 @@
           if (!vw || !vh) { return; }
 
           var panelH = Math.round(panelW * (nr.h * vh) / (nr.w * vw));
-
           c.width  = panelW;
           c.height = panelH;
 
@@ -516,49 +513,96 @@
         });
       }
 
-      // Mouse draw events per overlay
+      // Combined drag: inside rect = move, outside rect = draw new rect
       overlays.forEach(function (ov) {
-        var dragging = false;
-        var sx = 0, sy = 0;
+        var moving  = false;
+        var drawing = false;
+        var startPx = 0, startPy = 0;
+        var startRx = 0, startRy = 0;
+        var rafId   = null;
+
+        function hitTest(px, py, r) {
+          if (!normRect) { return false; }
+          var ow = r.width  || 1;
+          var oh = r.height || 1;
+          return px >= normRect.x * ow && px <= (normRect.x + normRect.w) * ow &&
+                 py >= normRect.y * oh && py <= (normRect.y + normRect.h) * oh;
+        }
 
         ov.addEventListener("mousedown", function (e) {
-          dragging = true;
-          var r = ov.getBoundingClientRect();
-          sx = e.clientX - r.left;
-          sy = e.clientY - r.top;
+          var r  = ov.getBoundingClientRect();
+          var px = e.clientX - r.left;
+          var py = e.clientY - r.top;
+          if (hitTest(px, py, r)) {
+            // Inside rect: move mode
+            moving  = true;
+            startPx = px;  startPy = py;
+            startRx = normRect.x;  startRy = normRect.y;
+            ov.style.cursor = "grabbing";
+          } else {
+            // Outside rect: draw mode
+            drawing = true;
+            startPx = px;  startPy = py;
+            ov.style.cursor = "crosshair";
+          }
           e.preventDefault();
         });
 
         document.addEventListener("mousemove", function (e) {
-          if (!dragging) { return; }
-          var r = ov.getBoundingClientRect();
-          var cx = e.clientX - r.left;
-          var cy = e.clientY - r.top;
+          var r  = ov.getBoundingClientRect();
           var ow = r.width  || 1;
           var oh = r.height || 1;
-          var nr = {
-            x: Math.max(0, Math.min(1, Math.min(sx, cx) / ow)),
-            y: Math.max(0, Math.min(1, Math.min(sy, cy) / oh)),
-            w: Math.min(1, Math.abs(cx - sx) / ow),
-            h: Math.min(1, Math.abs(cy - sy) / oh)
-          };
-          // Clamp right/bottom
-          nr.w = Math.min(nr.w, 1 - nr.x);
-          nr.h = Math.min(nr.h, 1 - nr.y);
-          normRect = nr;
-          showRects(nr);
+
+          if (moving) {
+            var dx   = (e.clientX - r.left - startPx) / ow;
+            var dy   = (e.clientY - r.top  - startPy) / oh;
+            var newX = Math.max(0, Math.min(1 - normRect.w, startRx + dx));
+            var newY = Math.max(0, Math.min(1 - normRect.h, startRy + dy));
+            normRect = { x: newX, y: newY, w: normRect.w, h: normRect.h };
+            showRects(normRect);
+            if (rafId) { cancelAnimationFrame(rafId); }
+            rafId = requestAnimationFrame(function () { drawZoom(normRect); rafId = null; });
+          } else if (drawing) {
+            var cx = e.clientX - r.left;
+            var cy = e.clientY - r.top;
+            var nr = {
+              x: Math.max(0, Math.min(1, Math.min(startPx, cx) / ow)),
+              y: Math.max(0, Math.min(1, Math.min(startPy, cy) / oh)),
+              w: Math.min(1, Math.abs(cx - startPx) / ow),
+              h: Math.min(1, Math.abs(cy - startPy) / oh)
+            };
+            nr.w = Math.min(nr.w, 1 - nr.x);
+            nr.h = Math.min(nr.h, 1 - nr.y);
+            normRect = nr;
+            showRects(normRect);
+          }
         });
 
         document.addEventListener("mouseup", function () {
-          if (!dragging) { return; }
-          dragging = false;
-          if (normRect && normRect.w > 0.015 && normRect.h > 0.015) {
+          if (moving) {
+            moving = false;
+            ov.style.cursor = "move";
             drawZoom(normRect);
+          } else if (drawing) {
+            drawing = false;
+            ov.style.cursor = "crosshair";
+            if (normRect && normRect.w > 0.015 && normRect.h > 0.015) {
+              drawZoom(normRect);
+            }
           }
+        });
+
+        // Dynamic cursor feedback
+        ov.addEventListener("mousemove", function (e) {
+          if (moving || drawing) { return; }
+          var r  = ov.getBoundingClientRect();
+          var px = e.clientX - r.left;
+          var py = e.clientY - r.top;
+          ov.style.cursor = hitTest(px, py, r) ? "move" : "crosshair";
         });
       });
 
-      // Re-draw zoom on scrubber move
+      // Re-draw zoom on scrubber seek
       if (scrubber) {
         scrubber.addEventListener("input", function () {
           if (!normRect) { return; }
@@ -566,11 +610,13 @@
         });
       }
 
-      // Called after new videos finish loading (scene change)
+      // Show default rect immediately (zoom drawn after first video load)
+      showRects(normRect);
+
+      // Called after videos finish loading (initial load + scene change)
       return function onVideosReady() {
-        if (normRect) {
-          setTimeout(function () { drawZoom(normRect); }, 80);
-        }
+        showRects(normRect);
+        setTimeout(function () { drawZoom(normRect); }, 80);
       };
     }
 
@@ -638,8 +684,11 @@
       var onZoomReady   = null; // set after initZoomFeature
 
       function resetScrubber() {
-        methodVideos.forEach(function (v) { v.currentTime = 0; });
-        if (scrubberInput) { scrubberInput.value = 0; }
+        var startTime = 0.1; // skip blank first frame
+        var duration  = (leaderVideo && isFinite(leaderVideo.duration)) ? leaderVideo.duration : 0;
+        var startVal  = (duration > 0) ? Math.round(startTime / duration * 1000) : 0;
+        methodVideos.forEach(function (v) { v.currentTime = startTime; });
+        if (scrubberInput) { scrubberInput.value = startVal; }
       }
 
       // --- Video loading ---
